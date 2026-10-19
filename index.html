@@ -47,7 +47,7 @@ h1{font-size:clamp(42px,11vw,96px);letter-spacing:6px;font-weight:900;background
 <path d="M104 262l8-14l8 12l8-16l8 14l8-17l8 17l8-14l8 16l8-12l8 14Z" fill="#d8ccad"/>
 <path d="M120 238q-2 30 -6 50M182 240q3 25 0 42" stroke="#8a0010" stroke-width="4" fill="none" class="drip"/>
 <path d="M60 175q-15 20 5 40M240 175q15 20 -5 40" stroke="#3a2f28" stroke-width="3" fill="none" opacity=".6"/>
-</svg><div id="cl" style="margin-top:0">CLICK... IF YOU DARE</div></div>
+</svg><div id="cl" style="margin-top:0">CLICK... IF YOU DARE</div><div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn alt" id="mwalk" style="padding:10px 18px;font-size:.85rem">WALK FOR ME (HARDER FIGHTS)</button><button class="btn" id="msteer" style="padding:10px 18px;font-size:.85rem">I'LL STEER</button></div></div>
 <div class="sub" id="tbest" style="position:absolute;bottom:18px;left:0;right:0"></div><button id="bstart" style="display:none"></button></div>
 <style>
 #logo{position:fixed;inset:0;z-index:5;background:#000;justify-content:center;display:flex;flex-direction:column;align-items:center;animation:lgo 7.6s forwards;perspective:800px}
@@ -82,6 +82,9 @@ function n(m,at){const f=440*Math.pow(2,(m-69)/12)*(1+(Math.random()-.5)*.012);[
 const s=A.createOscillator(),sg=A.createGain();s.type='sawtooth';s.frequency.setValueAtTime(110,A.currentTime);s.frequency.exponentialRampToValueAtTime(30,A.currentTime+1.5);sg.gain.setValueAtTime(.25,A.currentTime);sg.gain.exponentialRampToValueAtTime(.0001,A.currentTime+1.6);s.connect(sg).connect(A.destination);s.start();s.stop(A.currentTime+1.7);
 CM={stop(){alive=false;M.gain.setTargetAtTime(0,A.currentTime,.15);try{dr.stop(A.currentTime+.6)}catch(e){};setTimeout(()=>A.close(),900)}}}catch(e){}}
 document.getElementById('tbest').style.visibility='hidden';setTimeout(()=>{document.getElementById('tbest').style.visibility='';document.getElementById('logo').style.display='none';document.getElementById('ncname').style.display='block';document.getElementById('title').classList.add('evil');creepy();setTimeout(()=>{document.getElementById('clown').style.display='flex'},1600)},7600);
+document.getElementById('mwalk').addEventListener('click',()=>{WFM=true;AW=true;AWstop=false;document.getElementById('twalk').style.display=''});
+document.getElementById('msteer').addEventListener('click',()=>{WFM=false;AW=false;document.getElementById('twalk').style.display='none'});
+document.getElementById('twalk').style.display='none';
 document.getElementById('clown').addEventListener('click',()=>{if(CM)CM.stop();document.getElementById('ncname').style.display='none';document.getElementById('title').classList.remove('evil');document.getElementById('title').classList.remove('on');playCut()});
 </script>
 <div class="ov" id="cut" style="background:#000;z-index:30;cursor:pointer"><style>@keyframes cfl{0%,100%{opacity:1}47%{opacity:1}48%{opacity:.4}50%{opacity:1}92%{opacity:.7}}#cut{background:radial-gradient(ellipse at 50% 40%,#2a0008,#000 70%)!important}#csign{font:900 clamp(34px,10vw,64px) Georgia,serif;color:#FFD23D;text-shadow:0 0 12px #ff3d5a,0 0 40px #b0001a;letter-spacing:6px;animation:cfl 2.4s infinite;margin-bottom:18px}</style><div id="csign">SUN<span style="color:#ff3d5a">N</span>FUN</div><div id="cuttx" style="max-width:640px;font-family:'Courier New',monospace;font-size:clamp(16px,4.2vw,24px);line-height:1.6;color:#f3e9dc;text-shadow:0 0 10px #b0001a;white-space:pre-wrap;text-align:left;min-height:50vh"></div><div style="margin-top:20px;font-size:13px;opacity:.6;letter-spacing:3px">TAP TO SKIP</div></div>
@@ -328,17 +331,17 @@ function loadLevel(n,fresh){const L=LEVELS[n],w=Math.max(...L.map.map(r=>r.lengt
 function cell(x,y){x|=0;y|=0;if(x<0||y<0||x>=MW||y>=MH)return'#';return M[y][x]}
 function blocked(x,y){const c=cell(x,y);if(c=='D'||c=='K'){const d=DOORS[(y|0)*MW+(x|0)];return d.o<.9}return solid(c)}
 // ================= INPUT =================
-const K={},T={mx:0,my:0,look:0,fire:false,mid:null,lid:null,ms:{x:0,y:0}};let mouseDX=0,touchMode=false,AW=false,AWstop=false;
+const K={},T={mx:0,my:0,look:0,fire:false,mid:null,lid:null,ms:{x:0,y:0}};let mouseDX=0,touchMode=false,AW=false,AWstop=false,WFM=false;
 addEventListener('keydown',e=>{K[e.code]=1;if(!G||!P)return;
  if(e.code=='Digit1')swapTo(0);if(e.code=='Digit2')swapTo(1);if(e.code=='Digit3')swapTo(2);if(e.code=='KeyQ')cycle();
- if(e.code=='KeyE')useAct();if(e.code=='KeyR'){AW=true;AWstop=!AWstop;G.msg=AWstop?'AUTO-WALK OFF':'AUTO-WALK ON';G.mt=1.2}if(e.code=='KeyM'){A.music=!A.music;G.msg=A.music?'MUSIC ON':'MUSIC OFF';G.mt=1.2}
+ if(e.code=='KeyE')useAct();if(e.code=='KeyR'&&WFM){AW=true;AWstop=!AWstop;G.msg=AWstop?'AUTO-WALK OFF':'AUTO-WALK ON';G.mt=1.2}if(e.code=='KeyM'){A.music=!A.music;G.msg=A.music?'MUSIC ON':'MUSIC OFF';G.mt=1.2}
  if(e.code=='Escape'||e.code=='KeyP')setPause(!G.paused);if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault()});
 addEventListener('keyup',e=>K[e.code]=0);
 V.addEventListener('mousedown',e=>{if(touchMode)return;if(document.pointerLockElement!==V&&V.requestPointerLock)V.requestPointerLock();K.Mouse=1});
 addEventListener('mouseup',()=>K.Mouse=0);
 addEventListener('mousemove',e=>{if(document.pointerLockElement===V)mouseDX+=e.movementX});
 const W=document.getElementById('wrap');
-W.addEventListener('touchstart',e=>{if(e.target.closest&&e.target.closest('.ov.on'))return;if(!touchMode){AW=true;AWstop=false}touchMode=true;document.getElementById('touch').classList.add('on');for(const t of e.changedTouches){const id=t.target.id;
+W.addEventListener('touchstart',e=>{if(e.target.closest&&e.target.closest('.ov.on'))return;touchMode=true;document.getElementById('touch').classList.add('on');for(const t of e.changedTouches){const id=t.target.id;
  if(id=='tfire'){T.fire=true;T.fid=t.identifier;continue}if(id=='tswap'){cycle();continue}if(id=='tuse'){useAct();continue}if(id=='twalk'){AWstop=!AWstop;t.target.textContent=AWstop?'WALK':'STOP';if(G){G.msg=AWstop?'HOLDING':'WALKING';G.mt=.8}continue}
  if(t.clientX<innerWidth*.45&&T.mid==null){T.mid=t.identifier;T.ms={x:t.clientX,y:t.clientY};T.mx=T.my=0}else if(T.lid==null){T.lid=t.identifier;T.lx=t.clientX}}e.preventDefault()},{passive:false});
 W.addEventListener('touchmove',e=>{if(e.target.closest&&e.target.closest('.ov.on'))return;for(const t of e.changedTouches){if(t.identifier===T.mid){T.mx=Math.max(-1,Math.min(1,(t.clientX-T.ms.x)/55));T.my=Math.max(-1,Math.min(1,(t.clientY-T.ms.y)/55))}
@@ -367,7 +370,7 @@ function fire(){const W=WEAP[P.w];if(P.cd>0||P.swap>0)return;if(P.ammo[W.ammo]<W
  for(let p=0;p<W.pel;p++){const a=P.a+rnd(-W.spread,W.spread),ca=Math.cos(a),sa=Math.sin(a),wd=castDist(a);let best=null,bd=wd;
   for(const e of ENT){if(e.k!='mon'||e.dead)continue;const dx=e.x-P.x,dy=e.y-P.y,al=dx*ca+dy*sa;if(al<=0||al>=bd)continue;if(Math.abs(-dx*sa+dy*ca)<e.T.r){best=e;bd=al}}
   if(best)damageMon(best,rnd(...W.dmg)*(bd<2?1.25:1));else FX.push({x:P.x+ca*(wd-.05),y:P.y+sa*(wd-.05),z:rnd(-.05,.05),vx:0,vy:0,vz:.4,c:W.col,t:.25})}}
-function hurtP(d,sx,sy){if(G.done)return;const a=Math.min(P.arm,d*.6);P.arm-=a;d-=a;P.hp-=d;P.hurt=Math.min(1,P.hurt+.5+d/40);G.shake=Math.max(G.shake,.3);play('hurt');G.heat=Math.min(1,G.heat+.15);
+function hurtP(d,sx,sy){if(G.done)return;if(WFM)d*=1.6;const a=Math.min(P.arm,d*.6);P.arm-=a;d-=a;P.hp-=d;P.hurt=Math.min(1,P.hurt+.5+d/40);G.shake=Math.max(G.shake,.3);play('hurt');G.heat=Math.min(1,G.heat+.15);
  if(P.hp<=0){P.hp=0;die()}}
 function moveEnt(e,dx,dy,r){if(!blocked(e.x+dx+Math.sign(dx)*r,e.y))e.x+=dx;if(!blocked(e.x,e.y+dy+Math.sign(dy)*r))e.y+=dy}
 function pickups(){for(const e of ENT){if(e.k!='item'||e.gone)continue;if(Math.hypot(e.x-P.x,e.y-P.y)>.6)continue;let ok=true,m='';

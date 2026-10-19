@@ -47,7 +47,7 @@ h1{font-size:clamp(42px,11vw,96px);letter-spacing:6px;font-weight:900;background
 <path d="M104 262l8-14l8 12l8-16l8 14l8-17l8 17l8-14l8 16l8-12l8 14Z" fill="#d8ccad"/>
 <path d="M120 238q-2 30 -6 50M182 240q3 25 0 42" stroke="#8a0010" stroke-width="4" fill="none" class="drip"/>
 <path d="M60 175q-15 20 5 40M240 175q15 20 -5 40" stroke="#3a2f28" stroke-width="3" fill="none" opacity=".6"/>
-</svg><div id="cl" style="margin-top:0">CLICK... IF YOU DARE</div><div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn alt" id="mwalk" style="padding:10px 18px;font-size:.85rem">WALK FOR ME (HARDER FIGHTS)</button><button class="btn" id="msteer" style="padding:10px 18px;font-size:.85rem">I'LL STEER</button></div></div>
+</svg><div id="cl" style="margin-top:0">CLICK... IF YOU DARE</div><div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn alt" id="mwalk" style="padding:10px 18px;font-size:.85rem">WALK FOR ME (FAST &amp; TACTICAL)</button><button class="btn" id="msteer" style="padding:10px 18px;font-size:.85rem">I'LL STEER</button></div></div>
 <div class="sub" id="tbest" style="position:absolute;bottom:18px;left:0;right:0"></div><button id="bstart" style="display:none"></button></div>
 <style>
 #logo{position:fixed;inset:0;z-index:5;background:#000;justify-content:center;display:flex;flex-direction:column;align-items:center;animation:lgo 7.6s forwards;perspective:800px}
@@ -324,7 +324,7 @@ function loadLevel(n,fresh){const L=LEVELS[n],w=Math.max(...L.map.map(r=>r.lengt
  for(let y=0;y<MH;y++){const row=[];for(let x=0;x<w;x++){let c=L.map[y][x]||'#';if(y==0||x==0||y==MH-1||x==w-1)if(!solid(c))c='#';
   const cx=x+.5,cy=y+.5;
   if(c=='P'){P.x=cx;P.y=cy;c='.';let best=0;[[1,0],[0,1],[-1,0],[0,-1]].forEach(([dx,dy],i)=>{let k=0;while(!solid(L.map[y+dy*(k+1)]?.[x+dx*(k+1)]||'#'))k++;if(k>best){best=k;P.a=Math.atan2(dy,dx)}})}
-  else if(c=='i'||c=='e'||c=='r'){const t=c=='i'?'imp':c=='e'?'eye':'brute',T=TYPES[t];ENT.push({k:'mon',t,T,x:cx,y:cy,hp:T.hp*(1+n*.15),st:'idle',tt:0,cd:1+Math.random(),f:0,ft:Math.random(),alert:false,dead:false});G.total++;c='.'}
+  else if(c=='i'||c=='e'||c=='r'){const t=c=='i'?'imp':c=='e'?'eye':'brute',T=TYPES[t];ENT.push({k:'mon',t,T,x:cx,y:cy,hp:T.hp*(1+n*.15)*(WFM?1.8:1),st:'idle',tt:0,cd:1+Math.random(),f:0,ft:Math.random(),alert:false,dead:false});G.total++;c='.'}
   else if('hbscSLkal'.includes(c)){const m={h:'hp',b:'bul',s:'she',c:'cel',S:'sg',L:'pl',k:'key',a:'arm',l:'lamp'}[c];ENT.push({k:m=='lamp'?'deco':'item',t:m,x:cx,y:cy});c='.'}
   if(c=='D'||c=='K')DOORS[y*w+x]={o:0,st:0,t:0,lock:c=='K'};
   row.push(c)}M.push(row)}}
@@ -370,7 +370,7 @@ function fire(){const W=WEAP[P.w];if(P.cd>0||P.swap>0)return;if(P.ammo[W.ammo]<W
  for(let p=0;p<W.pel;p++){const a=P.a+rnd(-W.spread,W.spread),ca=Math.cos(a),sa=Math.sin(a),wd=castDist(a);let best=null,bd=wd;
   for(const e of ENT){if(e.k!='mon'||e.dead)continue;const dx=e.x-P.x,dy=e.y-P.y,al=dx*ca+dy*sa;if(al<=0||al>=bd)continue;if(Math.abs(-dx*sa+dy*ca)<e.T.r){best=e;bd=al}}
   if(best)damageMon(best,rnd(...W.dmg)*(bd<2?1.25:1));else FX.push({x:P.x+ca*(wd-.05),y:P.y+sa*(wd-.05),z:rnd(-.05,.05),vx:0,vy:0,vz:.4,c:W.col,t:.25})}}
-function hurtP(d,sx,sy){if(G.done)return;if(WFM)d*=1.6;const a=Math.min(P.arm,d*.6);P.arm-=a;d-=a;P.hp-=d;P.hurt=Math.min(1,P.hurt+.5+d/40);G.shake=Math.max(G.shake,.3);play('hurt');G.heat=Math.min(1,G.heat+.15);
+function hurtP(d,sx,sy){if(G.done)return;if(WFM)d*=1.3;const a=Math.min(P.arm,d*.6);P.arm-=a;d-=a;P.hp-=d;P.hurt=Math.min(1,P.hurt+.5+d/40);G.shake=Math.max(G.shake,.3);play('hurt');G.heat=Math.min(1,G.heat+.15);
  if(P.hp<=0){P.hp=0;die()}}
 function moveEnt(e,dx,dy,r){if(!blocked(e.x+dx+Math.sign(dx)*r,e.y))e.x+=dx;if(!blocked(e.x,e.y+dy+Math.sign(dy)*r))e.y+=dy}
 function pickups(){for(const e of ENT){if(e.k!='item'||e.gone)continue;if(Math.hypot(e.x-P.x,e.y-P.y)>.6)continue;let ok=true,m='';
@@ -388,18 +388,18 @@ function update(dt){G.t+=dt;G.mt-=dt;G.heat=Math.max(0,G.heat-dt*.04);G.shake=Ma
  let f=(K.KeyW||K.ArrowUp?1:0)-(K.KeyS||K.ArrowDown?1:0)-T.my,s=(K.KeyD?1:0)-(K.KeyA?1:0)+T.mx;
  const auto=AW&&!AWstop;
  if(auto){ // AUTO-WALK: forward always; left thumb steers, pull back to backpedal
-  P.a+=T.mx*2.4*dt;s=(K.KeyD?1:0)-(K.KeyA?1:0);f=T.my>.55?-1:(K.KeyS||K.ArrowDown?-1:.8);
+  P.a+=T.mx*3.2*dt;s=(K.KeyD?1:0)-(K.KeyA?1:0);f=T.my>.55?-1:(K.KeyS||K.ArrowDown?-1:.8);
   const pa=P.a;const free=a=>{let d=0;while(d<2.5&&!blocked(P.x+Math.cos(a)*d,P.y+Math.sin(a)*d))d+=.2;return d};
-  if(f>0&&free(pa)<.9){const L=free(pa-.7),R=free(pa+.7);const fc=cell(P.x+Math.cos(pa)*.7,P.y+Math.sin(pa)*.7);if(fc!='D'&&fc!='X')P.a+=(R>=L?1:-1)*2.2*dt}
+  if(f>0&&free(pa)<1.6){const L=free(pa-.9),R=free(pa+.9);const fc=cell(P.x+Math.cos(pa)*.7,P.y+Math.sin(pa)*.7);if(fc!='D'&&fc!='X')P.a+=(R>=L?1:-1)*3.4*dt}
   // aim assist toward nearest visible clown in front
-  let best=null,bd=1e9;for(const e of ENT){if(e.k!='mon'||e.dead)continue;const dx=e.x-P.x,dy=e.y-P.y,dd=Math.hypot(dx,dy);if(dd>12)continue;let da=Math.atan2(dy,dx)-P.a;da=Math.atan2(Math.sin(da),Math.cos(da));if(Math.abs(da)<.45&&dd<bd&&los(P.x,P.y,e.x,e.y)){bd=dd;best=da}}
-  if(best!==null)P.a+=best*Math.min(1,dt*4);
+  let best=null,bd=1e9;for(const e of ENT){if(e.k!='mon'||e.dead)continue;const dx=e.x-P.x,dy=e.y-P.y,dd=Math.hypot(dx,dy);if(dd>12)continue;let da=Math.atan2(dy,dx)-P.a;da=Math.atan2(Math.sin(da),Math.cos(da));if(Math.abs(da)<(dd<10?Math.PI:.6)&&dd<bd&&los(P.x,P.y,e.x,e.y)){bd=dd;best=da}}
+  if(best!==null)P.a+=best*Math.min(1,dt*(Math.abs(best)>.6?3:5));
  }
  const mag=Math.hypot(f,s);if(mag>1){f/=mag;s/=mag}
- const sp=(K.ShiftLeft?5.2:(auto?3.3:3.8))*dt,ca=Math.cos(P.a),sa=Math.sin(P.a),mx=(ca*f-sa*s)*sp,my=(sa*f+ca*s)*sp,r=.25;
+ const sp=(K.ShiftLeft?5.2:(auto?5.2:3.8))*dt,ca=Math.cos(P.a),sa=Math.sin(P.a),mx=(ca*f-sa*s)*sp,my=(sa*f+ca*s)*sp,r=.25;
  if(!blocked(P.x+mx+Math.sign(mx)*r,P.y))P.x+=mx;else if(cell(P.x+mx+Math.sign(mx)*r,P.y)=='X')finishLevel();
  if(!blocked(P.x,P.y+my+Math.sign(my)*r))P.y+=my;else if(cell(P.x,P.y+my+Math.sign(my)*r)=='X')finishLevel();
- const moving=Math.hypot(mx,my)>.001;if(moving){P.bob+=dt*10;P.stepT-=dt;if(P.stepT<0){P.stepT=.38;play('step')}}
+ P.vx=mx/Math.max(dt,1e-4);P.vy=my/Math.max(dt,1e-4);const moving=Math.hypot(mx,my)>.001;if(moving){P.bob+=dt*10;P.stepT-=dt;if(P.stepT<0){P.stepT=.38;play('step')}}
  // auto-open doors you walk into
  if(f>0){const fx=P.x+ca*.7,fy=P.y+sa*.7,c=cell(fx,fy);if(c=='D'){const d=DOORS[(fy|0)*MW+(fx|0)];if(d.st==0){d.st=1;play3d('door',(fx|0)+.5,(fy|0)+.5)}}}
  if(K.Space||K.Mouse||T.fire)fire();
@@ -413,12 +413,15 @@ function update(dt){G.t+=dt;G.mt-=dt;G.heat=Math.max(0,G.heat-dt*.04);G.shake=Ma
   if(e.st=='pain'){e.tt-=dt;e.f=3;if(e.tt<0)e.st='chase';continue}
   if(e.st=='atk'){e.tt-=dt;e.f=2;if(e.tt<0){e.st='chase';const see=los(e.x,e.y,P.x,P.y);
     if(e.mode=='m'){if(dist<1.3)hurtP(T2.melee*rnd(.7,1.2));play3d('claw',e.x,e.y)}
-    else if(see){const a=Math.atan2(dy,dx)+rnd(-.05,.05),v=e.t=='eye'?6:7;PROJ.push({x:e.x+Math.cos(a)*.4,y:e.y+Math.sin(a)*.4,vx:Math.cos(a)*v,vy:Math.sin(a)*v,spr:T2.shot,dmg:T2.sdmg*(1+lvl*.1),own:'m',t:4});play3d('fireball',e.x,e.y)}}
+    else if(see){let a=Math.atan2(dy,dx)+rnd(-.05,.05);const v=e.t=='eye'?6:7;if(WFM&&P.vx!==undefined){const tt=dist/v,px=P.x+P.vx*tt*.8,py=P.y+P.vy*tt*.8;a=Math.atan2(py-e.y,px-e.x)+rnd(-.05,.05)}PROJ.push({x:e.x+Math.cos(a)*.4,y:e.y+Math.sin(a)*.4,vx:Math.cos(a)*v,vy:Math.sin(a)*v,spr:T2.shot,dmg:T2.sdmg*(1+lvl*.1),own:'m',t:4});play3d('fireball',e.x,e.y)}}
    continue}
   // chase
   e.f=(e.ft*4|0)%2;const see=dist<16&&los(e.x,e.y,P.x,P.y);
   if(e.cd<=0&&see){if(T2.melee&&dist<1.2){e.st='atk';e.mode='m';e.tt=.3;e.cd=T2.rate*.8;continue}
    if(T2.shot&&dist>1.6&&dist<12&&Math.random()<.6){e.st='atk';e.mode='r';e.tt=.45;e.cd=T2.rate+rnd(0,1);continue}e.cd=.4}
+  if(WFM&&see){e.sd=e.sd||(Math.random()<.5?1:-1);if(Math.random()<dt*.5)e.sd*=-1;
+   if(!T2.melee){const keep=e.t=='eye'?5:6;let a=Math.atan2(dy,dx),fw=dist>keep+1?1:dist<keep-1.5?-1:0;const v=T2.spd*1.25*dt;moveEnt(e,(Math.cos(a)*fw+Math.cos(a+Math.PI/2)*e.sd)*v,(Math.sin(a)*fw+Math.sin(a+Math.PI/2)*e.sd)*v,T2.r*.8);e.ft+=dt;continue}
+   else if(dist>2.5){const a=Math.atan2(dy,dx)+e.sd*.55,v=T2.spd*1.1*dt;moveEnt(e,Math.cos(a)*v,Math.sin(a)*v,T2.r*.8);continue}}
   if(dist>(T2.melee?.9:3.5)){let a=Math.atan2(dy,dx);if(!see)a+=Math.sin(G.t*1.3+e.x)*.9;const v=T2.spd*dt;moveEnt(e,Math.cos(a)*v,Math.sin(a)*v,T2.r*.8)}
   else if(!T2.melee){const a=Math.atan2(dy,dx)+Math.PI/2,v=T2.spd*dt*Math.sin(G.t+e.y);moveEnt(e,Math.cos(a)*v,Math.sin(a)*v,T2.r*.8)}
   for(const o of ENT){if(o===e||o.k!='mon'||o.dead)continue;const ox=e.x-o.x,oy=e.y-o.y,od=Math.hypot(ox,oy);if(od<.6&&od>0)moveEnt(e,ox/od*dt,oy/od*dt,.2)}}

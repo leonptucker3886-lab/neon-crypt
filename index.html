@@ -312,10 +312,10 @@ V.addEventListener('mousedown',e=>{if(touchMode)return;if(document.pointerLockEl
 addEventListener('mouseup',()=>K.Mouse=0);
 addEventListener('mousemove',e=>{if(document.pointerLockElement===V)mouseDX+=e.movementX});
 const W=document.getElementById('wrap');
-W.addEventListener('touchstart',e=>{touchMode=true;document.getElementById('touch').classList.add('on');for(const t of e.changedTouches){const id=t.target.id;
+W.addEventListener('touchstart',e=>{if(e.target.closest&&e.target.closest('.ov.on'))return;touchMode=true;document.getElementById('touch').classList.add('on');for(const t of e.changedTouches){const id=t.target.id;
  if(id=='tfire'){T.fire=true;T.fid=t.identifier;continue}if(id=='tswap'){cycle();continue}if(id=='tuse'){useAct();continue}
  if(t.clientX<innerWidth*.45&&T.mid==null){T.mid=t.identifier;T.ms={x:t.clientX,y:t.clientY};T.mx=T.my=0}else if(T.lid==null){T.lid=t.identifier;T.lx=t.clientX}}e.preventDefault()},{passive:false});
-W.addEventListener('touchmove',e=>{for(const t of e.changedTouches){if(t.identifier===T.mid){T.mx=Math.max(-1,Math.min(1,(t.clientX-T.ms.x)/55));T.my=Math.max(-1,Math.min(1,(t.clientY-T.ms.y)/55))}
+W.addEventListener('touchmove',e=>{if(e.target.closest&&e.target.closest('.ov.on'))return;for(const t of e.changedTouches){if(t.identifier===T.mid){T.mx=Math.max(-1,Math.min(1,(t.clientX-T.ms.x)/55));T.my=Math.max(-1,Math.min(1,(t.clientY-T.ms.y)/55))}
  if(t.identifier===T.lid){T.look+=t.clientX-T.lx;T.lx=t.clientX}}e.preventDefault()},{passive:false});
 W.addEventListener('touchend',e=>{for(const t of e.changedTouches){if(t.identifier===T.mid){T.mid=null;T.mx=T.my=0}if(t.identifier===T.lid)T.lid=null;if(t.identifier===T.fid)T.fire=false}});
 W.addEventListener('touchcancel',()=>{T.mid=T.lid=null;T.mx=T.my=0;T.fire=false});

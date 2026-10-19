@@ -86,3 +86,102 @@ When the builder is sure the game is ready, it MUST tell Leon "ready for testing
 - [ ] Pushed to GitHub, deployed public on Vercel, links shared
 - [ ] Docs: tech sheet, tester SOP, job framing, Phase 2 handbook (.md + .pdf)
 - [ ] Leon told "ready for testing"
+
+---
+
+## 11. Game Designer Checklist (game design phase)
+Complete every box before declaring a build "ready for testing". Any unchecked MUST item blocks handoff.
+
+### A. Concept & design doc
+- [ ] Game title, genre, theme/setting and win/lose conditions written down
+- [ ] Core loop defined (what the player does every 30 seconds)
+- [ ] Target platforms confirmed: desktop AND mobile/touch
+- [ ] Visual style matches Arcadeline / Knockout Queens (neon, arcade, LeonLink brand)
+- [ ] Leon's unclear instructions listed with the interpretation chosen
+
+### B. Repo & structure
+- [ ] One GitHub repo per game under leonptucker3886-lab
+- [ ] Single self-contained index.html (no external asset dependencies)
+- [ ] New features/chapters layered on top; working versions are never removed
+
+### C. Opening sequence
+- [ ] Full-screen black, "LEONLINK PRESENTS..."
+- [ ] LeonLink anchor logo spins 5 seconds
+- [ ] "ARCADELINE" with "EPIC" beneath
+- [ ] Game title flashes in with themed music + stinger
+- [ ] Title character / start screen appears; game starts fresh
+- [ ] Tap/click to start verified on touch AND mouse
+
+### D. Story, enemies, levels
+- [ ] Skippable story cutscene stating setting, goal and threat
+- [ ] At least 3 enemy variations, each distinct in look AND behaviour
+- [ ] Named zones/levels with title cards
+- [ ] Clear ending/escape screen and death screen
+
+### E. Controls & modes
+- [ ] Normal (manual steer) mode is the default
+- [ ] Mobile-friendly assisted mode (e.g. Walk For Me) offered as an option
+- [ ] Assisted mode balanced: faster, longer/tactical fights, harder combat
+- [ ] Touch controls never block menu/button taps
+- [ ] Keyboard + mouse controls documented
+
+### F. Graphics, UI, sound
+- [ ] Readable HUD (health, ammo, score, zone)
+- [ ] Low-health feedback (visual + audio)
+- [ ] Music and SFX for: intro, combat, enemy alert, enemy death, damage, win/lose
+- [ ] Audio unlocks on first tap (browser autoplay rules handled)
+- [ ] No flashing faster than 3 times per second (WCAG 2.2)
+- [ ] Touch targets ≥ 44×44 pt (Apple) / 48×48 dp (Google)
+
+### G. 3-Audit Rule
+- [ ] Audit 1 done — graphics, UI AND sound each improved (logged)
+- [ ] Audit 2 done — graphics, UI AND sound each improved (logged)
+- [ ] Audit 3 done — graphics, UI AND sound each improved (logged)
+- [ ] Code runs with zero console errors after each audit
+
+### H. Ship & hand off
+- [ ] Every change committed and pushed to GitHub
+- [ ] Deployed to a public Vercel link (login wall off)
+- [ ] Report to Leon: links, how it plays, interpretations, what was/wasn't verified
+- [ ] Tech sheet + tester focus list written
+- [ ] "<Game> Phase 2" handbook (tech sheet + tester SOP + job description) in .md AND .pdf in /docs
+- [ ] Leon told "ready for testing"; designer moves to next project
+
+---
+
+## 12. Game Tester Checklist (AI and human testers)
+Follow the game's Phase 2 handbook. Any unchecked MUST item invalidates the session report.
+
+### A. Before the session
+- [ ] Read the Phase 2 handbook and this SOP in full
+- [ ] Confirm build: live URL + exact GitHub commit hash recorded
+- [ ] Device, OS, browser, screen size and input method recorded
+- [ ] Capability statement written (AI testers: what you can and cannot actually observe — e.g. audio, feel, real touch)
+- [ ] Session charter chosen from the handbook priority list; timebox set
+
+### B. During the session
+- [ ] Only report what was actually run and observed — no fabricated evidence
+- [ ] Every claim tagged OBSERVED / INFERRED / OPINION
+- [ ] Items you cannot judge marked NEEDS HUMAN (sound balance, scariness, motion comfort, auto-turn feel)
+- [ ] Opening sequence: timing, logo spin, text, music, start tap work
+- [ ] Cutscene: plays, readable, skippable
+- [ ] Both modes start and behave as documented
+- [ ] Each enemy type: distinguishable at distance, behaviour matches spec
+- [ ] Combat balance: damage, enemy health, fight length recorded with numbers
+- [ ] Menus: pause, death, level clear, win screens all work
+- [ ] Performance: FPS / stutter noted on mobile
+- [ ] Accessibility: flashing ≤ 3/sec, touch target sizes, readable text
+- [ ] Console errors captured
+
+### C. Reporting bugs
+- [ ] One GitHub Issue per bug, using the handbook template
+- [ ] Title, build hash, device, steps to reproduce, expected vs actual, evidence
+- [ ] Severity S1–S4 and priority P1–P3 assigned
+- [ ] S1/S2 bugs reproduced by a second tester before escalation
+- [ ] No code or deployment changes; never close your own issue
+
+### D. End of session
+- [ ] Session log completed (charter, time spent, coverage, bugs filed)
+- [ ] End-of-session summary: pass/fail per area, risks, NEEDS HUMAN list
+- [ ] Release bar checked: no open S1; no S2 in start flow, assisted mode or accessibility
+- [ ] Summary sent to Leon; Leon decides what ships
